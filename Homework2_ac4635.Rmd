@@ -1,0 +1,15 @@
+---
+title: "Homework 2"
+author: "JR Chansakul"
+date: 2020-09-21
+output: 
+  html_document:
+    toc: true
+---
+
+```{r}
+library(tidyverse)
+```
+
+# Problem 1
+
