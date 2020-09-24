@@ -14,7 +14,59 @@ library(readxl)
 
 ## Problem 1
 
+Read the Mr. Trashwheel dataset. 
 
+```{r}
+trashwheel_df =
+  read_xlsx("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
+    sheet = "Mr. Trash Wheel",
+    range = cell_cols("A:N")) %>% 
+  janitor::clean_names() %>% 
+  drop_na(dumpster) %>% 
+  mutate(
+    sports_ball = round(sports_balls),
+    sports_ball = as.integer(sports_balls)
+  )
+```
+
+This dataset contains information for the Mr. Trashwell trash collector in Baltimore, Maryland. As trash enters the inner harbor, the trashwheel collects that trash 
+
+Read precipitation data!
+
+```{r}
+precip_2018 =
+  read_xlsx("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
+    sheet = "2018 Precipitation",
+    skip = 1
+  ) %>%  
+  janitor::clean_names() %>% 
+  drop_na(month) %>% 
+    mutate(year = 2018) %>% 
+    relocate(year)
+  
+precip_2017 =
+  read_xlsx("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
+    sheet = "2018 Precipitation",
+    skip = 1
+  ) %>%  
+  janitor::clean_names() %>% 
+  drop_na(month) %>% 
+    mutate(year = 2017) %>% 
+    relocate(year)
+
+```
+
+Now combine annual precipitation 
+
+```{r}
+month_df =
+    tibble(
+      month_num = 1:12
+    )
+
+precip_df = 
+  bind_rows(precip_2018, precip_2017)
+```
 
 
 
@@ -32,7 +84,7 @@ library(readxl)
 NYC_transit_df =
   read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
   janitor::clean_names()
-
+  select(NYC_transit_df, station_latitude)
 
 ```
 
