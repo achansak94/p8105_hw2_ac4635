@@ -68,23 +68,23 @@ precip_df =
   bind_rows(precip_2018, precip_2017)
 ```
 
+This dataset contains information from the Mr. Trashwheel trash collector in Baltimore, Maryland. As trash enters the inner harbor, the trashwheel collects that trash, and stores it in a dumpster. The dataset contains information on year, month, and trash collected, include some specific kinds of trash. There are a total of `r nrow(trashwheel_df)` rows in our final dataset. Additional data sheets include month precipitation data. In this dataset:
 
-
-
-
-
-
-
+* The median number of sports balls found in a dumpster in 2017 was `r trashwheel_df %>% filter(year == 2017) %>% pull(sports_balls) %>% median()`
+* The total precipitation in 2018 was `r precip_df %>% filter(year == 2018) %>% pull(total) %>% sum()` inches.
 
 
 
 # Problem 2
 
-```{r}
+```{r NYC_transit_data}
 NYC_transit_df =
   read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
-  janitor::clean_names()
-  select(NYC_transit_df, station_latitude)
-
+    janitor::clean_names() %>% 
+    select(line:ada, -staffing, -staff_hours, -exit_only)
+     
+    
+  
+    
 ```
 
