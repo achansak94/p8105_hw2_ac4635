@@ -13,3 +13,26 @@ library(tidyverse)
 
 # Problem 1
 
+
+
+
+
+
+
+
+
+
+
+
+
+# Problem 2
+
+```{r}
+NYC_transit_df =
+  read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
+  janitor::clean_names() %>% 
+  select(litters_data, line, station, name, station)
+
+
+```
+
