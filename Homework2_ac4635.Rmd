@@ -81,11 +81,18 @@ Import and clean NYC transit data.
 
 ```{r NYC_transit_data, collapse=TRUE}
 NYC_transit_df =
-  read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
+  read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv",
+      col_types = cols(
+      Route8 = col_character(),
+      Route9 = col_character(),
+      Route10 = col_character(),
+      Route11 = col_character()
+      )) %>% 
     janitor::clean_names() %>% 
     select(line:ada, -staffing, -staff_hours, -exit_only) %>% 
-    mutate (entry = recode(entry, 'YES' = TRUE, 'NO' = FALSE)
+    mutate(entry = recode(entry, 'YES' = TRUE, 'NO' = FALSE)
     )
+    
 ```
 
 This dataset contains entry and exit information for the NYC subway station with the following variables of interest filtered from the imported dataset: `r names(NYC_transit_df)`. I kept variables with key information such as station name, entrance type and ADA compliance and removed variables such as exit and entrance location. Additionally, the entry variable was converted from a character to a logical variable. The dataset has a total of `r nrow(NYC_transit_df)` rows and `r ncol(NYC_transit_df)` columns with each row representing an entrance or exit. 
@@ -94,32 +101,31 @@ Each row contains the line, name, location (latitude, longitude) and route(s) as
 ## Problem 2: Part 2
 
 ```{r Transit_Details, collapse=TRUE}
-count(distinct(NYC_transit_df, line, station_name))
+count(distinct(NYC_transit_df, line, station_name, na.rm=TRUE))
 
-count(filter(NYC_transit_df, ada == TRUE) %>%
+count(filter(NYC_transit_df, ada == TRUE, na.rm=TRUE) %>%
         distinct(line, station_name))
 
-count(filter(NYC_transit_df, vending == "NO") %>%
+count(filter(NYC_transit_df, vending == "NO", na.rm=TRUE) %>%
   filter (entry == "TRUE"))
 
-count(filter (NYC_transit_df, vending == "NO"))
+count(filter (NYC_transit_df, vending == "NO", na.rm=TRUE))
 ```
 
-There are `r count(distinct(NYC_transit_df, line, station_name))` distinct stations.
+There are `r count(distinct(NYC_transit_df, line, station_name, na.rm=TRUE))` distinct stations.
 
-There are `r count(filter(NYC_transit_df, ada == TRUE) %>% distinct(line, station_name))` stations that are ADA compliant. 
+There are `r count(filter(NYC_transit_df, ada == TRUE, na.rm=TRUE) %>% distinct(line, station_name))` stations that are ADA compliant. 
 
-Among the `r count(filter (NYC_transit_df, vending == "NO"))` subway entrances/exits without vending, `r count(filter(NYC_transit_df, ada == TRUE) %>% distinct(line, station_name))` allow allow entry. 
+Among the `r count(filter (NYC_transit_df, vending == "NO", na.rm=TRUE))` subway entrances/exits without vending, `r count(filter(NYC_transit_df, vending == "NO", na.rm=TRUE) %>% filter (entry == "TRUE"))` allowed entry. 
 
 ## Problem 2: Part 3
 
-
-
-
 ```{r}
-subway_data =
-  NYC_transit_df
-  
+
+
+NYC_transit_tidy =
+    NYC_transit_df
+    
 
 ```
 

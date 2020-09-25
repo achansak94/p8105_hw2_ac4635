@@ -7,14 +7,14 @@ JR Chansakul
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ──────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
     ## ✓ tibble  3.0.3     ✓ dplyr   1.0.2
     ## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
     ## ✓ readr   1.3.1     ✓ forcats 0.5.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -98,26 +98,18 @@ Import and clean NYC transit data.
 
 ``` r
 NYC_transit_df =
-  read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
+  read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv",
+      col_types = cols(
+      Route8 = col_character(),
+      Route9 = col_character(),
+      Route10 = col_character(),
+      Route11 = col_character()
+      )) %>% 
     janitor::clean_names() %>% 
     select(line:ada, -staffing, -staff_hours, -exit_only) %>% 
-    mutate (entry = recode(entry, 'YES' = TRUE, 'NO' = FALSE)
+    mutate(entry = recode(entry, 'YES' = TRUE, 'NO' = FALSE)
     )
-## Parsed with column specification:
-## cols(
-##   .default = col_character(),
-##   `Station Latitude` = col_double(),
-##   `Station Longitude` = col_double(),
-##   Route8 = col_double(),
-##   Route9 = col_double(),
-##   Route10 = col_double(),
-##   Route11 = col_double(),
-##   ADA = col_logical(),
-##   `Free Crossover` = col_logical(),
-##   `Entrance Latitude` = col_double(),
-##   `Entrance Longitude` = col_double()
-## )
-## See spec(...) for full column specifications.
+    
 ```
 
 This dataset contains entry and exit information for the NYC subway
@@ -138,27 +130,27 @@ information (e.g. subways on that line) and has many NAs.
 ## Problem 2: Part 2
 
 ``` r
-count(distinct(NYC_transit_df, line, station_name))
+count(distinct(NYC_transit_df, line, station_name, na.rm=TRUE))
 ## # A tibble: 1 x 1
 ##       n
 ##   <int>
 ## 1   465
 
-count(filter(NYC_transit_df, ada == TRUE) %>%
+count(filter(NYC_transit_df, ada == TRUE, na.rm=TRUE) %>%
         distinct(line, station_name))
 ## # A tibble: 1 x 1
 ##       n
 ##   <int>
 ## 1    84
 
-count(filter(NYC_transit_df, vending == "NO") %>%
+count(filter(NYC_transit_df, vending == "NO", na.rm=TRUE) %>%
   filter (entry == "TRUE"))
 ## # A tibble: 1 x 1
 ##       n
 ##   <int>
 ## 1    69
 
-count(filter (NYC_transit_df, vending == "NO"))
+count(filter (NYC_transit_df, vending == "NO", na.rm=TRUE))
 ## # A tibble: 1 x 1
 ##       n
 ##   <int>
@@ -169,12 +161,11 @@ There are 465 distinct stations.
 
 There are 84 stations that are ADA compliant.
 
-Among the 183 subway entrances/exits without vending, 84 allow allow
-entry.
+Among the 183 subway entrances/exits without vending, 69 allowed entry.
 
 ## Problem 2: Part 3
 
 ``` r
-subway_data =
-  NYC_transit_df
+NYC_transit_tidy =
+    NYC_transit_df
 ```
