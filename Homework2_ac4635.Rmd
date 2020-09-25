@@ -77,14 +77,33 @@ This dataset contains information from the Mr. Trashwheel trash collector in Bal
 
 # Problem 2
 
+Import and clean NYC transit data.
+
 ```{r NYC_transit_data}
 NYC_transit_df =
   read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
     janitor::clean_names() %>% 
-    select(line:ada, -staffing, -staff_hours, -exit_only)
-     
-    
-  
-    
+    select(line:ada, -staffing, -staff_hours, -exit_only) %>% 
+    mutate (entry = recode(entry, 'YES' = TRUE, 'NO' = FALSE)
+    )
+
+
+
 ```
+
+This dataset contains entry and exit information for the NYC subway station with the following variables of interest filtered from the imported dataset: `r names(NYC_transit_df)`. I kept variables with key information such as station name, entrance type and ADA compliance and removed variables such as exit and entrance location. Additionally, the entry variable was converted from a character to a logical variable. The dataset has a total of `r nrow(NYC_transit_df)` rows and `r ncol(NYC_transit_df)` columns with each row representing an entrance or exit. 
+Each row contains the line, name, location (latitude, longitude) and route(s) associated with the station. The dataset is not tidy because the route 1 through route 11 columns contains variable information (e.g. subways on that line) and has many NAs.  
+
+There are `r count(distinct(NYC_transit_df, line, station_name))` distinct stations. 
+
+
+
+```{r}
+subway_data =
+  NYC_transit_df
+  
+
+```
+
+
 
