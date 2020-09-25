@@ -101,22 +101,26 @@ Each row contains the line, name, location (latitude, longitude) and route(s) as
 ## Problem 2: Part 2
 
 ```{r Transit_Details, collapse=TRUE}
-count(distinct(NYC_transit_df, line, station_name, na.rm=TRUE))
+count(distinct(NYC_transit_df, line, station_name))
 
-count(filter(NYC_transit_df, ada == TRUE, na.rm=TRUE) %>%
+count(filter(NYC_transit_df, ada == TRUE) %>%
         distinct(line, station_name))
 
-count(filter(NYC_transit_df, vending == "NO", na.rm=TRUE) %>%
+count(filter(NYC_transit_df, vending == "NO") %>%
   filter (entry == "TRUE"))
 
-count(filter (NYC_transit_df, vending == "NO", na.rm=TRUE))
+count(filter (NYC_transit_df, vending == "NO"))
+
+(count(filter(NYC_transit_df, vending == "NO") %>%
+  filter (entry == "TRUE")))/(count(filter (NYC_transit_df, vending == "NO")))
+
 ```
 
-There are `r count(distinct(NYC_transit_df, line, station_name, na.rm=TRUE))` distinct stations.
+There are `r count(distinct(NYC_transit_df, line, station_name))` distinct stations.
 
-There are `r count(filter(NYC_transit_df, ada == TRUE, na.rm=TRUE) %>% distinct(line, station_name))` stations that are ADA compliant. 
+There are `r count(filter(NYC_transit_df, ada == TRUE) %>% distinct(line, station_name))` stations that are ADA compliant. 
 
-Among the `r count(filter (NYC_transit_df, vending == "NO", na.rm=TRUE))` subway entrances/exits without vending, `r count(filter(NYC_transit_df, vending == "NO", na.rm=TRUE) %>% filter (entry == "TRUE"))` allowed entry. 
+Among the `r count(filter (NYC_transit_df, vending == "NO"))` subway entrances/exits without vending, `r count(filter(NYC_transit_df, vending == "NO") %>% filter (entry == "TRUE"))` allowed entry. The proportion of station entrances/exits without vending that allow entry is `r (count(filter(NYC_transit_df, vending == "NO") %>% filter (entry == "TRUE")))/(count(filter (NYC_transit_df, vending == "NO")))`.
 
 ## Problem 2: Part 3
 
