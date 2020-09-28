@@ -148,14 +148,14 @@ The code chunk below creates a dataset that counts distinct serve the A Train.
   Distinct_A_stations= 
     NYC_transit_tidy %>%
     filter(route_names == 'A') %>% 
-    distinct(station_name) %>%
+    distinct(station_name, line) %>%
     count()
     
 # Count stations that serve A train that are ADA compliant
 ADA_compliant_A_trains = 
   NYC_transit_tidy %>% 
   filter(route_names == 'A', ada == TRUE) %>% 
-  distinct(station_name) %>% 
+  distinct(station_name, line) %>% 
   count()  
 ```
 
@@ -224,10 +224,12 @@ Combine_data =
 Final_df = 
   left_join(Combine_data, unemployment_tidy_df, by = c("Year", "Month")) 
 
+#View combined datasets 
 view(Combine_data)
 view(Final_df)
 ```
 
+The final dataset contains `r nrow(Final_df)` rows by `r ncol(Final_df)` columns. The dataset contains information between the years `r min(pull(Final_df, Year))` and `r max(pull(Final_df, Year))`
 
 
 
