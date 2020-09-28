@@ -228,7 +228,7 @@ pols_month_df =
     cols = starts_with("prez"),
     names_to = "prez_party",
     values_to = "value") %>% 
-  mutate(prez_party = recode(prez_party, `prez_gop` = 'GOP', `prez_dem` = 'DEM')) %>% 
+  filter (value==1) %>% 
   select(-Day, -value) %>% 
   arrange (Year, Month) %>% 
   view ()
@@ -257,8 +257,8 @@ snp_df =
   relocate(Year, Month) %>% 
   mutate(Month = as.numeric(Month)) %>% 
   mutate(Month = month.abb[Month]) %>%
-  select (-Day) %>%
   arrange (Year, Month) %>%
+  select (-Day) %>%
   view()
 ```
 
@@ -306,12 +306,16 @@ Combine_data =
   left_join(pols_month_df, snp_df, by = c("Year", "Month"))
 
 Final_df = 
-  left_join(Combine_data, unemployment_tidy_df, by = c("Year", "Month")) 
+  left_join(Combine_data, unemployment_tidy_df, by = c("Year", "Month"))
 
 #View combined datasets 
 view(Combine_data)
 view(Final_df)
 ```
 
-The final dataset contains 1644 rows by 11 columns. The dataset contains
-information between the years 1947 and 2015
+Write a short paragraph about these datasets. Explain briefly what each
+dataset contained, and describe the resulting dataset (e.g. give the
+dimension, range of years, and names of key variables):
+
+The final dataset contains 817 rows by 11 columns. The dataset contains
+information between the years
