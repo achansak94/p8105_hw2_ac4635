@@ -148,7 +148,7 @@ The code chunk below creates a dataset that counts distinct serve the A Train.
   Distinct_A_stations= 
     NYC_transit_tidy %>%
     filter(route_names == 'A') %>% 
-    distinct(station_name) 
+    distinct(station_name, line) 
     count()
     
 # Count stations that serve A train that are ADA compliant
@@ -159,8 +159,56 @@ ADA_compliant_A_trains =
   count()  
 ```
 
-
 There are `r Distinct_A_stations` distinct stations that serve the A train and `r ADA_compliant_A_trains` are ADA compliant.
 
+
+## Problem 3
+
+Clean and tidy the dataset in pols-month.csv.
+
+```{r pols_month_data}
+
+pols_month_df = 
+  read_csv("./data/pols-month.csv")%>%
+  janitor::clean_names() %>% 
+  separate (mon, into = c("year", "month", "day")) %>% 
+  mutate(month = as.numeric(month)) %>% 
+  mutate(month = month.abb[month]) %>% 
+  pivot_longer(
+    cols = starts_with("prez"),
+    names_to = "prez_party",
+    values_to = "value") %>% 
+  mutate(prez_party = recode(prez_party, `prez_gop` = 'GOP', `prez_dem` = 'DEM')) %>% 
+  select(-day, -value) %>% 
+  arrange (year, month) %>% 
+  view ()
+```
+
+Clean and tidy the dataset in the snp dataset.
+
+
+```{r snp_dataset}
+snp_df = 
+  read_csv("./data/snp.csv") %>% 
+  janitor::clean_names() %>% 
+  separate(date, into = c("month", "day", "year")) %>% 
+  relocate(year, month)
+```
+
+
+Clean and tidy the dataset in the snp dataset.
+```{r}
+
+unemployment_tidy_df =
+  read_csv("./data/unemployment.csv")
+
+
+view(unemployment_tidy_df)
+
+
+
+```
+
+```
 
 
