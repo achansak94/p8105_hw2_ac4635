@@ -192,7 +192,11 @@ snp_df =
   read_csv("./data/snp.csv") %>% 
   janitor::clean_names() %>% 
   separate(date, into = c("month", "day", "year")) %>% 
-  relocate(year, month)
+  relocate(year, month) %>% 
+  mutate(month = as.numeric(month)) %>% 
+  mutate(month = month.abb[month]) %>%
+  select (-day) %>%
+  view()
 ```
 
 
@@ -203,7 +207,7 @@ unemployment_tidy_df =
   read_csv("./data/unemployment.csv")
 
 
-view(unemployment_tidy_df)
+
 
 
 
