@@ -142,13 +142,13 @@ After cleaning the dataset, there are a total of `r nrow(NYC_transit_tidy)` rows
 
 The code chunk below creates a dataset that counts distinct serve the A Train.
 
-```{r  }
+```{r }
 
 # Count distinct stations that serve A train
   Distinct_A_stations= 
     NYC_transit_tidy %>%
     filter(route_names == 'A') %>% 
-    distinct(station_name, line) 
+    distinct(station_name) %>%
     count()
     
 # Count stations that serve A train that are ADA compliant
@@ -186,7 +186,6 @@ pols_month_df =
 
 Clean and tidy the dataset in the snp dataset.
 
-
 ```{r snp_dataset}
 snp_df = 
   read_csv("./data/snp.csv") %>% 
@@ -196,23 +195,23 @@ snp_df =
   mutate(month = as.numeric(month)) %>% 
   mutate(month = month.abb[month]) %>%
   select (-day) %>%
+  arrange (year) %>%
   view()
 ```
 
 
-Clean and tidy the dataset in the snp dataset.
-```{r}
+Clean and tidy the dataset in the umeployment dataset.
+
+```{r unemployment_dataset}
 
 unemployment_tidy_df =
-  read_csv("./data/unemployment.csv")
-
-
-
-
-
+  read_csv("./data/unemployment.csv")%>% 
+  janitor::clean_names() %>% 
+  pivot_longer(
+    cols = jan:dec,
+    names_to = "month",
+    values_to = "unemployment_rate") %>% 
+  view()
 
 ```
-
-```
-
 
