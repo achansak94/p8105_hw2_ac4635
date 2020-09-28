@@ -90,7 +90,7 @@ NYC_transit_df =
       )) %>% 
     janitor::clean_names() %>% 
     select(line:ada, -staffing, -staff_hours, -exit_only) %>% 
-    mutate(entry = recode(entry, 'YES' = TRUE, 'NO' = FALSE)
+    mutate(entry = recode(entry, 'YES' = TRUE, 'NO' = FALSE) 
     )
     
 ```
@@ -107,7 +107,7 @@ count(filter(NYC_transit_df, ada == TRUE) %>%
         distinct(line, station_name))
 
 count(filter(NYC_transit_df, vending == "NO") %>%
-  filter (entry == "TRUE"))
+  filter (entry == "FALSE"))
 
 count(filter (NYC_transit_df, vending == "NO"))
 
@@ -171,16 +171,16 @@ Clean and tidy the dataset in pols-month.csv.
 pols_month_df = 
   read_csv("./data/pols-month.csv")%>%
   janitor::clean_names() %>% 
-  separate (mon, into = c("year", "month", "day")) %>% 
-  mutate(month = as.numeric(month)) %>% 
-  mutate(month = month.abb[month]) %>% 
+  separate (mon, into = c("Year", "Month", "Day")) %>% 
+  mutate(Month = as.numeric(Month)) %>% 
+  mutate(Month = month.abb[Month]) %>% 
   pivot_longer(
     cols = starts_with("prez"),
     names_to = "prez_party",
     values_to = "value") %>% 
   mutate(prez_party = recode(prez_party, `prez_gop` = 'GOP', `prez_dem` = 'DEM')) %>% 
-  select(-day, -value) %>% 
-  arrange (year, month) %>% 
+  select(-Day, -value) %>% 
+  arrange (Year, Month) %>% 
   view ()
 ```
 
@@ -190,12 +190,12 @@ Clean and tidy the dataset in the snp dataset.
 snp_df = 
   read_csv("./data/snp.csv") %>% 
   janitor::clean_names() %>% 
-  separate(date, into = c("month", "day", "year")) %>% 
-  relocate(year, month) %>% 
-  mutate(month = as.numeric(month)) %>% 
-  mutate(month = month.abb[month]) %>%
-  select (-day) %>%
-  arrange (year) %>%
+  separate(date, into = c("Month", "Day", "Year")) %>% 
+  relocate(Year, Month) %>% 
+  mutate(Month = as.numeric(Month)) %>% 
+  mutate(Month = month.abb[Month]) %>%
+  select (-Day) %>%
+  arrange (Year, Month) %>%
   view()
 ```
 
@@ -205,13 +205,31 @@ Clean and tidy the dataset in the umeployment dataset.
 ```{r unemployment_dataset}
 
 unemployment_tidy_df =
-  read_csv("./data/unemployment.csv")%>% 
-  janitor::clean_names() %>% 
+  read_csv("./data/unemployment.csv") %>% 
   pivot_longer(
-    cols = jan:dec,
-    names_to = "month",
-    values_to = "unemployment_rate") %>% 
+    cols = Jan:Dec,
+    names_to = "Month",
+    values_to = "Unemployment_rate") %>% 
+  mutate(Year = as.character(Year)) %>% 
   view()
+```
+
+
+Last step, join the datasets by merging snp into pols, and then merging unemployment into the result.
+
+```{r}
+Combine_data = 
+  left_join(pols_month_df, snp_df, by = c("Year", "Month"))
+
+Final_df = 
+  left_join(Combine_data, unemployment_tidy_df, by = c("Year", "Month")) 
+
+view(Combine_data)
+view(Final_df)
+
+# Issue with unemployment results not showing. 
 
 ```
+
+
 
