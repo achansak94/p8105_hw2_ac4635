@@ -7,14 +7,14 @@ JR Chansakul
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ──────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
     ## ✓ tibble  3.0.3     ✓ dplyr   1.0.2
     ## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
     ## ✓ readr   1.3.1     ✓ forcats 0.5.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -172,7 +172,43 @@ entry is 0.3770492.
 
 ## Problem 2: Part 3
 
+Reformated the data so that route number and route name are distinct
+variables.
+
 ``` r
 NYC_transit_tidy =
-    NYC_transit_df
+  pivot_longer(
+    NYC_transit_df, 
+    route1:route11,
+    names_to = "route_number", 
+    values_to = "route_names") %>% 
+    drop_na(route_names) 
+
+view (NYC_transit_tidy) # view dataset 
 ```
+
+After cleaning the dataset, there are a total of 4270 rows and 10
+columns. Dataset is now tidy because the NA responses have been removed
+from the route\_names variable.
+
+The code chunk below creates a dataset that counts distinct serve the A
+Train.
+
+``` r
+# Count distinct stations that serve A train
+  Distinct_A_stations= 
+    NYC_transit_tidy %>%
+    filter(route_names == 'A') %>% 
+    distinct(station_name) %>%
+    count()
+
+# Count stations that serve A train that are ADA compliant
+ADA_compliant_A_trains = 
+  NYC_transit_tidy %>% 
+  filter(route_names == 'A', ada == TRUE) %>% 
+  distinct(station_name) %>% 
+  count()  
+```
+
+There are 56 distinct stations that serve the A train and 16 are ADA
+compliant.

@@ -100,7 +100,7 @@ Each row contains the line, name, location (latitude, longitude) and route(s) as
 
 ## Problem 2: Part 2
 
-```{r Transit_Details, collapse=TRUE}
+```{r Transit_Details_Code, collapse=TRUE}
 count(distinct(NYC_transit_df, line, station_name))
 
 count(filter(NYC_transit_df, ada == TRUE) %>%
@@ -124,14 +124,43 @@ Among the `r count(filter (NYC_transit_df, vending == "NO"))` subway entrances/e
 
 ## Problem 2: Part 3
 
-```{r}
+Reformated the data so that route number and route name are distinct variables.
 
-
+```{r Tidy_Subway_Data}
 NYC_transit_tidy =
-    NYC_transit_df
-    
+  pivot_longer(
+    NYC_transit_df, 
+    route1:route11,
+    names_to = "route_number", 
+    values_to = "route_names") %>% 
+    drop_na(route_names) 
 
+view (NYC_transit_tidy) # view dataset 
 ```
+
+After cleaning the dataset, there are a total of `r nrow(NYC_transit_tidy)` rows and `r ncol(NYC_transit_tidy)` columns. Dataset is now tidy because the NA responses have been removed from the route_names variable.  
+
+The code chunk below creates a dataset that counts distinct serve the A Train.
+
+```{r  }
+
+# Count distinct stations that serve A train
+  Distinct_A_stations= 
+    NYC_transit_tidy %>%
+    filter(route_names == 'A') %>% 
+    distinct(station_name) 
+    count()
+    
+# Count stations that serve A train that are ADA compliant
+ADA_compliant_A_trains = 
+  NYC_transit_tidy %>% 
+  filter(route_names == 'A', ada == TRUE) %>% 
+  distinct(station_name) %>% 
+  count()  
+```
+
+
+There are `r Distinct_A_stations` distinct stations that serve the A train and `r ADA_compliant_A_trains` are ADA compliant.
 
 
 
