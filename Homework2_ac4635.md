@@ -7,14 +7,14 @@ JR Chansakul
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ─────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
     ## ✓ tibble  3.0.3     ✓ dplyr   1.0.2
     ## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
     ## ✓ readr   1.3.1     ✓ forcats 0.5.0
 
-    ## ── Conflicts ───────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -107,7 +107,7 @@ NYC_transit_df =
       )) %>% 
     janitor::clean_names() %>% 
     select(line:ada, -staffing, -staff_hours, -exit_only) %>% 
-    mutate(entry = recode(entry, 'YES' = TRUE, 'NO' = FALSE)
+    mutate(entry = recode(entry, 'YES' = TRUE, 'NO' = FALSE) 
     )
     
 ```
@@ -144,11 +144,11 @@ count(filter(NYC_transit_df, ada == TRUE) %>%
 ## 1    84
 
 count(filter(NYC_transit_df, vending == "NO") %>%
-  filter (entry == "TRUE"))
+  filter (entry == "FALSE"))
 ## # A tibble: 1 x 1
 ##       n
 ##   <int>
-## 1    69
+## 1   114
 
 count(filter (NYC_transit_df, vending == "NO"))
 ## # A tibble: 1 x 1
@@ -201,7 +201,7 @@ Train.
     filter(route_names == 'A') %>% 
     distinct(station_name) %>%
     count()
-
+    
 # Count stations that serve A train that are ADA compliant
 ADA_compliant_A_trains = 
   NYC_transit_tidy %>% 
@@ -212,3 +212,102 @@ ADA_compliant_A_trains =
 
 There are 56 distinct stations that serve the A train and 16 are ADA
 compliant.
+
+## Problem 3
+
+Clean and tidy the dataset in pols-month.csv.
+
+``` r
+pols_month_df = 
+  read_csv("./data/pols-month.csv")%>%
+  janitor::clean_names() %>% 
+  separate (mon, into = c("Year", "Month", "Day")) %>% 
+  mutate(Month = as.numeric(Month)) %>% 
+  mutate(Month = month.abb[Month]) %>% 
+  pivot_longer(
+    cols = starts_with("prez"),
+    names_to = "prez_party",
+    values_to = "value") %>% 
+  mutate(prez_party = recode(prez_party, `prez_gop` = 'GOP', `prez_dem` = 'DEM')) %>% 
+  select(-Day, -value) %>% 
+  arrange (Year, Month) %>% 
+  view ()
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   mon = col_date(format = ""),
+    ##   prez_gop = col_double(),
+    ##   gov_gop = col_double(),
+    ##   sen_gop = col_double(),
+    ##   rep_gop = col_double(),
+    ##   prez_dem = col_double(),
+    ##   gov_dem = col_double(),
+    ##   sen_dem = col_double(),
+    ##   rep_dem = col_double()
+    ## )
+
+Clean and tidy the dataset in the snp dataset.
+
+``` r
+snp_df = 
+  read_csv("./data/snp.csv") %>% 
+  janitor::clean_names() %>% 
+  separate(date, into = c("Month", "Day", "Year")) %>% 
+  relocate(Year, Month) %>% 
+  mutate(Month = as.numeric(Month)) %>% 
+  mutate(Month = month.abb[Month]) %>%
+  select (-Day) %>%
+  arrange (Year, Month) %>%
+  view()
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   date = col_character(),
+    ##   close = col_double()
+    ## )
+
+Clean and tidy the dataset in the umeployment dataset.
+
+``` r
+unemployment_tidy_df =
+  read_csv("./data/unemployment.csv") %>% 
+  pivot_longer(
+    cols = Jan:Dec,
+    names_to = "Month",
+    values_to = "Unemployment_rate") %>% 
+  mutate(Year = as.character(Year)) %>% 
+  view()
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   Year = col_double(),
+    ##   Jan = col_double(),
+    ##   Feb = col_double(),
+    ##   Mar = col_double(),
+    ##   Apr = col_double(),
+    ##   May = col_double(),
+    ##   Jun = col_double(),
+    ##   Jul = col_double(),
+    ##   Aug = col_double(),
+    ##   Sep = col_double(),
+    ##   Oct = col_double(),
+    ##   Nov = col_double(),
+    ##   Dec = col_double()
+    ## )
+
+Last step, join the datasets by merging snp into pols, and then merging
+unemployment into the result.
+
+``` r
+Combine_data = 
+  left_join(pols_month_df, snp_df, by = c("Year", "Month"))
+
+Final_df = 
+  left_join(Combine_data, unemployment_tidy_df, by = c("Year", "Month")) 
+
+view(Combine_data)
+view(Final_df)
+```

@@ -226,10 +226,8 @@ Final_df =
 
 view(Combine_data)
 view(Final_df)
-
-# Issue with unemployment results not showing. 
-
 ```
+
 
 
 
