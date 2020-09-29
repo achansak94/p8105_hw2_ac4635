@@ -169,7 +169,7 @@ Clean and tidy the dataset in pols-month.csv.
 ```{r pols_month_data}
 
 pols_month_df = 
-  read_csv("./data/pols-month.csv")%>%
+  read_csv("./data/pols-month.csv") %>%
   janitor::clean_names() %>% 
   separate (mon, into = c("Year", "Month", "Day")) %>% 
   mutate(Month = as.numeric(Month)) %>% 
@@ -233,8 +233,14 @@ view(Final_df)
 Write a short paragraph about these datasets. Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables):
 
 
+The original pols-month_df dataset contained 822 observations and 9 variables listing the the number of democratic and republican governors, US Senators, and US House of Representatives as well as the president's political affiliation at a moment in time. The dataset was restricted to the democractic and republican parties. After tidying the dataset, we have political information between the years `r min(pull(pols_month_df, Year))` and `r max(pull(pols_month_df, Year))` with `r nrow(pols_month_df)` observations and `r ncol(pols_month_df)` variables in the dataset. These are the following variables in this dataset: `r ls(pols_month_df)`. I created a "prez_party" variable indicated the incumbent's president political party. 
 
-The final dataset contains `r nrow(Final_df)` rows by `r ncol(Final_df)` columns. The dataset contains information between the years 
+After the “snp_df” dataset, it contained `r nrow(snp_df)` observations and `r ncol(pols_month_df)` variables in the dataset, which were `r ls(snp_df)`. This datset provides information on the Standard & Poor’s stock market index (S&P) from `r min(pull(snp_df, Year))` to `r max(pull(snp_df, Year))`. I separated the dates into month, day and year like the pols-month_df dataset and removed day from the “snp_df” dataset. The variable "close" represents the closing values of the S&P stock index on that specific date.
+
+After tidying the unemployment_tidy_df dataset, it contained `r nrow(unemployment_tidy_df)` observations and `r ncol(unemployment_tidy_df)` variables in the dataset, which were `r ls(unemployment_tidy_df)`. I created two variables, month and unemployment rate in our tidy dataset using pivot_longer. This datset provides unemployment rate by month from `r min(pull(unemployment_tidy_df, Year))` to `r max(pull(unemployment_tidy_df, Year))`.
+
+
+The final dataset was combined using left_join and contains `r nrow(Final_df)` rows by `r ncol(Final_df)` columns that includes NA for empty observations for each variable .. The dataset contains on politicians' political affiliation, unemploymnet rate and the S&P stock market from `r min(pull(Final_df, Year))` to `r max(pull(Final_df, Year))`. 
 
 
 

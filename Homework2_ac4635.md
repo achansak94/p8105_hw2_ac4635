@@ -7,14 +7,14 @@ JR Chansakul
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ───────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
     ## ✓ tibble  3.0.3     ✓ dplyr   1.0.2
     ## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
     ## ✓ readr   1.3.1     ✓ forcats 0.5.0
 
-    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ──────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -219,7 +219,7 @@ Clean and tidy the dataset in pols-month.csv.
 
 ``` r
 pols_month_df = 
-  read_csv("./data/pols-month.csv")%>%
+  read_csv("./data/pols-month.csv") %>%
   janitor::clean_names() %>% 
   separate (mon, into = c("Year", "Month", "Day")) %>% 
   mutate(Month = as.numeric(Month)) %>% 
@@ -317,5 +317,32 @@ Write a short paragraph about these datasets. Explain briefly what each
 dataset contained, and describe the resulting dataset (e.g. give the
 dimension, range of years, and names of key variables):
 
-The final dataset contains 817 rows by 11 columns. The dataset contains
-information between the years
+The original pols-month\_df dataset contained 822 observations and 9
+variables listing the the number of democratic and republican governors,
+US Senators, and US House of Representatives as well as the president’s
+political affiliation at a moment in time. The dataset was restricted to
+the democractic and republican parties. After tidying the dataset, we
+have political information between the years 1947 and 2015 with 817
+observations and 9 variables in the dataset. These are the following
+variables in this dataset: gov\_dem, gov\_gop, Month, prez\_party,
+rep\_dem, rep\_gop, sen\_dem, sen\_gop, Year. I created a “prez\_party”
+variable indicated the incumbent’s president political party.
+
+After the “snp\_df” dataset, it contained 787 observations and 9
+variables in the dataset, which were close, Month, Year. This datset
+provides information on the Standard & Poor’s stock market index (S\&P)
+from 1950 to 2015. I separated the dates into month, day and year like
+the pols-month\_df dataset and removed day from the “snp\_df” dataset.
+The variable “close” represents the closing values of the S\&P stock
+index on that specific date.
+
+After tidying the unemployment\_tidy\_df dataset, it contained 816
+observations and 3 variables in the dataset, which were Month,
+Unemployment\_rate, Year. I created two variables, month and
+unemployment rate in our tidy dataset using pivot\_longer. This datset
+provides unemployment rate by month from 1948 to 2015.
+
+The final dataset was combined using left\_join and contains 817 rows by
+11 columns that includes NA for empty observations for each variable ..
+The dataset contains on politicians’ political affiliation, unemploymnet
+rate and the S\&P stock market from 1947 to 2015.
