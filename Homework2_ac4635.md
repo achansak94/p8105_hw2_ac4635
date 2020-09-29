@@ -228,7 +228,7 @@ pols_month_df =
     cols = starts_with("prez"),
     names_to = "president_party",
     values_to = "value") %>% #Take the month column variables and make it into rows 
-  filter (value==1) %>% 
+  filter(value %in% c(1,2)) %>% 
   mutate(president_party = recode(
     president_party, `prez_gop` = 'gop', `prez_dem` = 'dem')) %>% #recode president party observations to gop and dem
   select(-Day, -value) %>% #Remove day and value columns 
@@ -250,7 +250,7 @@ pols_month_df =
     ## )
 
 ``` r
-view(pols_month_df)
+view(pols_month_df) # View dataset 
 ```
 
 Clean and tidy the dataset in the snp dataset.
@@ -327,12 +327,15 @@ The original pols-month\_df dataset contained 822 observations and 9
 variables listing the the number of democratic and republican governors,
 US Senators, and US House of Representatives as well as the president’s
 political affiliation at a moment in time. The dataset was restricted to
-the democractic and republican parties. After tidying the dataset, we
-have political information between the years 1947 and 2015 with 817
+the democractic and republican parties. After tidying the dataset, I
+have political information between the years 1947 and 2015 with 822
 observations and 9 variables in the dataset. These are the following
 variables in this dataset: gov\_dem, gov\_gop, Month, president\_party,
 rep\_dem, rep\_gop, sen\_dem, sen\_gop, Year. I created a “prez\_party”
-variable indicated the incumbent’s president political party.
+variable indicated the incumbent’s president political party. I kept
+prez\_gop that was coded as 2 because that was during Nixon’s
+resignation and the vice president, Ford, was affiliated with the gop
+party when he was acting president.
 
 After the “snp\_df” dataset, it contained 787 observations and 9
 variables in the dataset, which were close, Month, Year. This datset
@@ -348,10 +351,10 @@ Unemployment\_rate, Year. I created two variables, month and
 unemployment rate in our tidy dataset using pivot\_longer. This datset
 provides unemployment rate by month from 1948 to 2015.
 
-The final dataset was combined using left\_join and contains 817 rows by
+The final dataset was combined using left\_join and contains 822 rows by
 11 columns that includes NA for empty observations for each variable ..
 The dataset contains on politicians’ political affiliation, unemploymnet
 rate and the S\&P stock market from 1947 to 2015. The important
 variables are described above and final dataset includes these
-variables: close, gov\_dem, gov\_gop, Month, president\_party, rep\_dem,
+variables:close, gov\_dem, gov\_gop, Month, president\_party, rep\_dem,
 rep\_gop, sen\_dem, sen\_gop, Unemployment\_rate, Year.
