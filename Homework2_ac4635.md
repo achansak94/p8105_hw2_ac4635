@@ -7,14 +7,14 @@ JR Chansakul
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ───────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
     ## ✓ tibble  3.0.3     ✓ dplyr   1.0.2
     ## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
     ## ✓ readr   1.3.1     ✓ forcats 0.5.0
 
-    ## ── Conflicts ──────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -219,20 +219,20 @@ Clean and tidy the dataset in pols-month.csv.
 
 ``` r
 pols_month_df = 
-  read_csv("./data/pols-month.csv") %>%
-  janitor::clean_names() %>% 
-  separate (mon, into = c("Year", "Month", "Day")) %>% 
-  mutate(Month = as.numeric(Month)) %>% 
-  mutate(Month = month.abb[Month]) %>% 
+  read_csv("./data/pols-month.csv") %>% #read in csv file
+  janitor::clean_names() %>% #clean names
+  separate (mon, into = c("Year", "Month", "Day")) %>% #Separate date into 3 columns: month, day, year 
+  mutate(Month = as.numeric(Month)) %>% #Convert month to numeric variable
+  mutate(Month = month.abb[Month]) %>%  #Abbreviate month variable from number
   pivot_longer(
     cols = starts_with("prez"),
     names_to = "president_party",
-    values_to = "value") %>% 
+    values_to = "value") %>% #Take the month column variables and make it into rows 
   filter (value==1) %>% 
   mutate(president_party = recode(
-    president_party, `prez_gop` = 'gop', `prez_dem` = 'dem')) %>% 
-  select(-Day, -value) %>% 
-  arrange (Year, Month) %>% 
+    president_party, `prez_gop` = 'gop', `prez_dem` = 'dem')) %>% #recode president party observations to gop and dem
+  select(-Day, -value) %>% #Remove day and value columns 
+  arrange (Year, Month) %>% #Arrange year and month to front of dataset 
   view ()
 ```
 
@@ -257,14 +257,14 @@ Clean and tidy the dataset in the snp dataset.
 
 ``` r
 snp_df = 
-  read_csv("./data/snp.csv") %>% 
-  janitor::clean_names() %>% 
-  separate(date, into = c("Month", "Day", "Year")) %>% 
-  relocate(Year, Month) %>% 
-  mutate(Month = as.numeric(Month)) %>% 
-  mutate(Month = month.abb[Month]) %>%
-  arrange (Year, Month) %>%
-  select (-Day) %>%
+  read_csv("./data/snp.csv") %>% #read in csv file
+  janitor::clean_names() %>% #clean names
+  separate(date, into = c("Month", "Day", "Year")) %>% #Separate date into 3 columns: month, day, year 
+  relocate(Year, Month) %>% #Relocate year and month variable to front
+  mutate(Month = as.numeric(Month)) %>%  #Convert month to numeric variable 
+  mutate(Month = month.abb[Month]) %>% #Abbreviate month variable from number
+  arrange (Year, Month) %>% #Arrange year and month
+  select (-Day) %>% #Remove day variable 
   view()
 ```
 
@@ -278,12 +278,12 @@ Clean and tidy the dataset in the umeployment dataset.
 
 ``` r
 unemployment_tidy_df =
-  read_csv("./data/unemployment.csv") %>% 
+  read_csv("./data/unemployment.csv") %>% #read in csv file
   pivot_longer(
     cols = Jan:Dec,
     names_to = "Month",
-    values_to = "Unemployment_rate") %>% 
-  mutate(Year = as.character(Year)) %>% 
+    values_to = "Unemployment_rate") %>% #Take the month column variables and make it into rows 
+  mutate(Year = as.character(Year)) %>% #Change Year to character variable to merge in final dataset  
   view()
 ```
 
@@ -309,10 +309,10 @@ unemployment into the result.
 
 ``` r
 Combine_data = 
-  left_join(pols_month_df, snp_df, by = c("Year", "Month"))
+  left_join(pols_month_df, snp_df, by = c("Year", "Month")) #left join pols_month_df dataset by snp_df
 
 Final_df = 
-  left_join(Combine_data, unemployment_tidy_df, by = c("Year", "Month"))
+  left_join(Combine_data, unemployment_tidy_df, by = c("Year", "Month")) #left join combine_data by unemployment_tidy_df
 
 #View combined datasets 
 view(Combine_data)
@@ -351,7 +351,7 @@ provides unemployment rate by month from 1948 to 2015.
 The final dataset was combined using left\_join and contains 817 rows by
 11 columns that includes NA for empty observations for each variable ..
 The dataset contains on politicians’ political affiliation, unemploymnet
-rate and the S\&P stock market from 1947 to 2015.
-
-decribe the 3 datasets and how you wrangled the datsets. The variables
-in the final dataset
+rate and the S\&P stock market from 1947 to 2015. The important
+variables are described above and final dataset includes these
+variables: close, gov\_dem, gov\_gop, Month, president\_party, rep\_dem,
+rep\_gop, sen\_dem, sen\_gop, Unemployment\_rate, Year.

@@ -169,37 +169,39 @@ Clean and tidy the dataset in pols-month.csv.
 ```{r pols_month_data}
 
 pols_month_df = 
-  read_csv("./data/pols-month.csv") %>%
-  janitor::clean_names() %>% 
-  separate (mon, into = c("Year", "Month", "Day")) %>% 
-  mutate(Month = as.numeric(Month)) %>% 
-  mutate(Month = month.abb[Month]) %>% 
+  read_csv("./data/pols-month.csv") %>% #read in csv file
+  janitor::clean_names() %>% #clean names
+  separate (mon, into = c("Year", "Month", "Day")) %>% #Separate date into 3 columns: month, day, year 
+  mutate(Month = as.numeric(Month)) %>% #Convert month to numeric variable
+  mutate(Month = month.abb[Month]) %>%  #Abbreviate month variable from number
   pivot_longer(
     cols = starts_with("prez"),
     names_to = "president_party",
-    values_to = "value") %>% 
+    values_to = "value") %>% #Take the month column variables and make it into rows 
   filter (value==1) %>% 
   mutate(president_party = recode(
-    president_party, `prez_gop` = 'gop', `prez_dem` = 'dem')) %>% 
-  select(-Day, -value) %>% 
-  arrange (Year, Month) %>% 
+    president_party, `prez_gop` = 'gop', `prez_dem` = 'dem')) %>% #recode president party observations to gop and dem
+  select(-Day, -value) %>% #Remove day and value columns 
+  arrange (Year, Month) %>% #Arrange year and month to front of dataset 
   view ()
 
 view(pols_month_df)
+
+
 ```
 
 Clean and tidy the dataset in the snp dataset.
 
 ```{r snp_dataset}
 snp_df = 
-  read_csv("./data/snp.csv") %>% 
-  janitor::clean_names() %>% 
-  separate(date, into = c("Month", "Day", "Year")) %>% 
-  relocate(Year, Month) %>% 
-  mutate(Month = as.numeric(Month)) %>% 
-  mutate(Month = month.abb[Month]) %>%
-  arrange (Year, Month) %>%
-  select (-Day) %>%
+  read_csv("./data/snp.csv") %>% #read in csv file
+  janitor::clean_names() %>% #clean names
+  separate(date, into = c("Month", "Day", "Year")) %>% #Separate date into 3 columns: month, day, year 
+  relocate(Year, Month) %>% #Relocate year and month variable to front
+  mutate(Month = as.numeric(Month)) %>%  #Convert month to numeric variable 
+  mutate(Month = month.abb[Month]) %>% #Abbreviate month variable from number
+  arrange (Year, Month) %>% #Arrange year and month
+  select (-Day) %>% #Remove day variable 
   view()
 ```
 
@@ -209,12 +211,12 @@ Clean and tidy the dataset in the umeployment dataset.
 ```{r unemployment_dataset}
 
 unemployment_tidy_df =
-  read_csv("./data/unemployment.csv") %>% 
+  read_csv("./data/unemployment.csv") %>% #read in csv file
   pivot_longer(
     cols = Jan:Dec,
     names_to = "Month",
-    values_to = "Unemployment_rate") %>% 
-  mutate(Year = as.character(Year)) %>% 
+    values_to = "Unemployment_rate") %>% #Take the month column variables and make it into rows 
+  mutate(Year = as.character(Year)) %>% #Change Year to character variable to merge in final dataset  
   view()
 ```
 
@@ -223,10 +225,10 @@ Last step, join the datasets by merging snp into pols, and then merging unemploy
 
 ```{r}
 Combine_data = 
-  left_join(pols_month_df, snp_df, by = c("Year", "Month"))
+  left_join(pols_month_df, snp_df, by = c("Year", "Month")) #left join pols_month_df dataset by snp_df
 
 Final_df = 
-  left_join(Combine_data, unemployment_tidy_df, by = c("Year", "Month"))
+  left_join(Combine_data, unemployment_tidy_df, by = c("Year", "Month")) #left join combine_data by unemployment_tidy_df
 
 #View combined datasets 
 view(Combine_data)
@@ -244,8 +246,7 @@ After the “snp_df” dataset, it contained `r nrow(snp_df)` observations and `
 After tidying the unemployment_tidy_df dataset, it contained `r nrow(unemployment_tidy_df)` observations and `r ncol(unemployment_tidy_df)` variables in the dataset, which were `r ls(unemployment_tidy_df)`. I created two variables, month and unemployment rate in our tidy dataset using pivot_longer. This datset provides unemployment rate by month from `r min(pull(unemployment_tidy_df, Year))` to `r max(pull(unemployment_tidy_df, Year))`.
 
 
-The final dataset was combined using left_join and contains `r nrow(Final_df)` rows by `r ncol(Final_df)` columns that includes NA for empty observations for each variable .. The dataset contains on politicians' political affiliation, unemploymnet rate and the S&P stock market from `r min(pull(Final_df, Year))` to `r max(pull(Final_df, Year))`. 
+The final dataset was combined using left_join and contains `r nrow(Final_df)` rows by `r ncol(Final_df)` columns that includes NA for empty observations for each variable .. The dataset contains on politicians' political affiliation, unemploymnet rate and the S&P stock market from `r min(pull(Final_df, Year))` to `r max(pull(Final_df, Year))`. The important variables are described above and final dataset includes these variables: `r ls(Final_df)`.
 
-decribe the 3 datasets and how you wrangled the datsets. The variables in the final dataset 
 
 
