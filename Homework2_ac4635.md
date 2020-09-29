@@ -1,20 +1,20 @@
 Homework 2
 ================
 JR Chansakul
-2020-09-21
+2020-09-28
 
 ``` r
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ───────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ───────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
     ## ✓ tibble  3.0.3     ✓ dplyr   1.0.2
     ## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
     ## ✓ readr   1.3.1     ✓ forcats 0.5.0
 
-    ## ── Conflicts ──────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ──────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -226,9 +226,11 @@ pols_month_df =
   mutate(Month = month.abb[Month]) %>% 
   pivot_longer(
     cols = starts_with("prez"),
-    names_to = "prez_party",
+    names_to = "president_party",
     values_to = "value") %>% 
   filter (value==1) %>% 
+  mutate(president_party = recode(
+    president_party, `prez_gop` = 'gop', `prez_dem` = 'dem')) %>% 
   select(-Day, -value) %>% 
   arrange (Year, Month) %>% 
   view ()
@@ -246,6 +248,10 @@ pols_month_df =
     ##   sen_dem = col_double(),
     ##   rep_dem = col_double()
     ## )
+
+``` r
+view(pols_month_df)
+```
 
 Clean and tidy the dataset in the snp dataset.
 
@@ -324,7 +330,7 @@ political affiliation at a moment in time. The dataset was restricted to
 the democractic and republican parties. After tidying the dataset, we
 have political information between the years 1947 and 2015 with 817
 observations and 9 variables in the dataset. These are the following
-variables in this dataset: gov\_dem, gov\_gop, Month, prez\_party,
+variables in this dataset: gov\_dem, gov\_gop, Month, president\_party,
 rep\_dem, rep\_gop, sen\_dem, sen\_gop, Year. I created a “prez\_party”
 variable indicated the incumbent’s president political party.
 
@@ -346,3 +352,6 @@ The final dataset was combined using left\_join and contains 817 rows by
 11 columns that includes NA for empty observations for each variable ..
 The dataset contains on politicians’ political affiliation, unemploymnet
 rate and the S\&P stock market from 1947 to 2015.
+
+decribe the 3 datasets and how you wrangled the datsets. The variables
+in the final dataset

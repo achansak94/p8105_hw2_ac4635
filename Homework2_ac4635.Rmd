@@ -1,7 +1,7 @@
 ---
 title: "Homework 2"
 author: "JR Chansakul"
-date: 2020-09-21
+date: 2020-09-28
 output: github_document
   
 ---
@@ -176,12 +176,16 @@ pols_month_df =
   mutate(Month = month.abb[Month]) %>% 
   pivot_longer(
     cols = starts_with("prez"),
-    names_to = "prez_party",
+    names_to = "president_party",
     values_to = "value") %>% 
   filter (value==1) %>% 
+  mutate(president_party = recode(
+    president_party, `prez_gop` = 'gop', `prez_dem` = 'dem')) %>% 
   select(-Day, -value) %>% 
   arrange (Year, Month) %>% 
   view ()
+
+view(pols_month_df)
 ```
 
 Clean and tidy the dataset in the snp dataset.
@@ -242,5 +246,6 @@ After tidying the unemployment_tidy_df dataset, it contained `r nrow(unemploymen
 
 The final dataset was combined using left_join and contains `r nrow(Final_df)` rows by `r ncol(Final_df)` columns that includes NA for empty observations for each variable .. The dataset contains on politicians' political affiliation, unemploymnet rate and the S&P stock market from `r min(pull(Final_df, Year))` to `r max(pull(Final_df, Year))`. 
 
+decribe the 3 datasets and how you wrangled the datsets. The variables in the final dataset 
 
 
