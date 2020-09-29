@@ -82,37 +82,37 @@ Import and clean NYC transit data.
 ```{r NYC_transit_data, collapse=TRUE}
 NYC_transit_df =
   read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv",
-      col_types = cols(
+      col_types = cols( 
       Route8 = col_character(),
       Route9 = col_character(),
       Route10 = col_character(),
       Route11 = col_character()
-      )) %>% 
-    janitor::clean_names() %>% 
-    select(line:ada, -staffing, -staff_hours, -exit_only) %>% 
-    mutate(entry = recode(entry, 'YES' = TRUE, 'NO' = FALSE) 
+      )) %>%  #change route to character names 
+    janitor::clean_names() %>% # clean names
+    select(line:ada, -staffing, -staff_hours, -exit_only) %>%  # Select variables I want to remove and keep 
+    mutate(entry = recode(entry, 'YES' = TRUE, 'NO' = FALSE) # Mutate entry code to logical variable  
     )
     
 ```
 
-This dataset contains entry and exit information for the NYC subway station with the following variables of interest filtered from the imported dataset: `r names(NYC_transit_df)`. I kept variables with key information such as station name, entrance type and ADA compliance and removed variables such as exit and entrance location. Additionally, the entry variable was converted from a character to a logical variable. The dataset has a total of `r nrow(NYC_transit_df)` rows and `r ncol(NYC_transit_df)` columns with each row representing an entrance or exit. 
+This dataset contains entry and exit information for the NYC subway station with the following variables of interest selected from the imported dataset: `r names(NYC_transit_df)`. I kept variables with key information such as station name, entrance type and ADA compliance and removed variables such as exit and entrance location. Additionally, the entry variable was converted from a character to a logical variable. The dataset has a total of `r nrow(NYC_transit_df)` rows and `r ncol(NYC_transit_df)` columns with each row representing an entrance or exit. 
 Each row contains the line, name, location (latitude, longitude) and route(s) associated with the station. The dataset is not tidy because the route 1 through route 11 columns contains variable information (e.g. subways on that line) and has many NAs.  
 
 ## Problem 2: Part 2
 
 ```{r Transit_Details_Code, collapse=TRUE}
-count(distinct(NYC_transit_df, line, station_name))
+count(distinct(NYC_transit_df, line, station_name)) # distinct stations 
 
-count(filter(NYC_transit_df, ada == TRUE) %>%
+count(filter(NYC_transit_df, ada == TRUE) %>% # distinct stations that are ADA compliant
         distinct(line, station_name))
 
-count(filter(NYC_transit_df, vending == "NO") %>%
+count(filter (NYC_transit_df, vending == "NO")) # subway stations without vending 
+
+count(filter(NYC_transit_df, vending == "NO") %>% # subway stations without vending that allowed entry
   filter (entry == "FALSE"))
 
-count(filter (NYC_transit_df, vending == "NO"))
-
 (count(filter(NYC_transit_df, vending == "NO") %>%
-  filter (entry == "TRUE")))/(count(filter (NYC_transit_df, vending == "NO")))
+  filter (entry == "TRUE")))/(count(filter (NYC_transit_df, vending == "NO"))) # Proportion of subway stations without vending that allowed entry
 
 ```
 
@@ -133,7 +133,7 @@ NYC_transit_tidy =
     route1:route11,
     names_to = "route_number", 
     values_to = "route_names") %>% 
-    drop_na(route_names) 
+    drop_na(route_names) # Pivot longer to tidy dataset 
 
 view (NYC_transit_tidy) # view dataset 
 ```
@@ -144,14 +144,14 @@ The code chunk below creates a dataset that counts distinct serve the A Train.
 
 ```{r }
 
-# Count distinct stations that serve A train
+# Dataset that counts distinct stations that serve A train
   Distinct_A_stations= 
     NYC_transit_tidy %>%
     filter(route_names == 'A') %>% 
     distinct(station_name, line) %>%
     count()
     
-# Count stations that serve A train that are ADA compliant
+# Dataste that counts stations that serve A train that are ADA compliant
 ADA_compliant_A_trains = 
   NYC_transit_tidy %>% 
   filter(route_names == 'A', ada == TRUE) %>% 
@@ -238,14 +238,13 @@ view(Final_df)
 Write a short paragraph about these datasets. Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables):
 
 
-The original pols-month_df dataset contained 822 observations and 9 variables listing the the number of democratic and republican governors, US Senators, and US House of Representatives as well as the president's political affiliation at a moment in time. The dataset was restricted to the democractic and republican parties. After tidying the dataset, I have political information between the years `r min(pull(pols_month_df, Year))` and `r max(pull(pols_month_df, Year))` with `r nrow(pols_month_df)` observations and `r ncol(pols_month_df)` variables in the dataset. These are the following variables in this dataset: `r ls(pols_month_df)`. I created a "prez_party" variable indicated the incumbent's president political party. I kept prez_gop that was coded as 2 because that was during Nixon's resignation and the vice president, Ford, was affiliated with the gop party when he was acting president. 
-
+The pols-month_df dataset contains the number of democratic and republican governors, US Senators, and US House of Representatives as well as the president's political affiliation at a moment in time. The dataset was restricted to the democractic and republican parties. After tidying the dataset, I have political information between the years `r min(pull(pols_month_df, Year))` and `r max(pull(pols_month_df, Year))` with `r nrow(pols_month_df)` observations and `r ncol(pols_month_df)` variables in the dataset. These are the following variables in this dataset: `r ls(pols_month_df)`. I created a "prez_party" variable indicated the incumbent's president political party. I kept prez_gop that was coded as 2 because that was during Nixon's resignation and the vice president, Ford, was affiliated with the gop party when he was acting president. 
 
 After the “snp_df” dataset, it contained `r nrow(snp_df)` observations and `r ncol(pols_month_df)` variables in the dataset, which were `r ls(snp_df)`. This datset provides information on the Standard & Poor’s stock market index (S&P) from `r min(pull(snp_df, Year))` to `r max(pull(snp_df, Year))`. I separated the dates into month, day and year like the pols-month_df dataset and removed day from the “snp_df” dataset. The variable "close" represents the closing values of the S&P stock index on that specific date.
 
 After tidying the unemployment_tidy_df dataset, it contained `r nrow(unemployment_tidy_df)` observations and `r ncol(unemployment_tidy_df)` variables in the dataset, which were `r ls(unemployment_tidy_df)`. I created two variables, month and unemployment rate in our tidy dataset using pivot_longer. This datset provides unemployment rate by month from `r min(pull(unemployment_tidy_df, Year))` to `r max(pull(unemployment_tidy_df, Year))`.
 
-The final dataset was combined using left_join and contains `r nrow(Final_df)` rows by `r ncol(Final_df)` columns that includes NA for empty observations for each variable .. The dataset contains on politicians' political affiliation, unemploymnet rate and the S&P stock market from `r min(pull(Final_df, Year))` to `r max(pull(Final_df, Year))`. The important variables are described above and final dataset includes these variables:`r ls(Final_df)`. 
+The final dataset was combined using left_join and contains `r nrow(Final_df)` rows by `r ncol(Final_df)` columns that includes NA for empty observations for each variable .. The dataset contains on politicians' political affiliation, unemploymnet rate and the S&P stock market from `r min(pull(Final_df, Year))` to `r max(pull(Final_df, Year))`. The important variables are described above in the separate datasets and the final dataset includes these variables:`r ls(Final_df)`. 
 
 
 

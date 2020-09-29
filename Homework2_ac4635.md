@@ -7,14 +7,14 @@ JR Chansakul
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
     ## ✓ tibble  3.0.3     ✓ dplyr   1.0.2
     ## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
     ## ✓ readr   1.3.1     ✓ forcats 0.5.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -99,21 +99,21 @@ Import and clean NYC transit data.
 ``` r
 NYC_transit_df =
   read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv",
-      col_types = cols(
+      col_types = cols( 
       Route8 = col_character(),
       Route9 = col_character(),
       Route10 = col_character(),
       Route11 = col_character()
-      )) %>% 
-    janitor::clean_names() %>% 
-    select(line:ada, -staffing, -staff_hours, -exit_only) %>% 
-    mutate(entry = recode(entry, 'YES' = TRUE, 'NO' = FALSE) 
+      )) %>%  #change route to character names 
+    janitor::clean_names() %>% # clean names
+    select(line:ada, -staffing, -staff_hours, -exit_only) %>%  # Select variables I want to remove and keep 
+    mutate(entry = recode(entry, 'YES' = TRUE, 'NO' = FALSE) # Mutate entry code to logical variable  
     )
     
 ```
 
 This dataset contains entry and exit information for the NYC subway
-station with the following variables of interest filtered from the
+station with the following variables of interest selected from the
 imported dataset: line, station\_name, station\_latitude,
 station\_longitude, route1, route2, route3, route4, route5, route6,
 route7, route8, route9, route10, route11, entrance\_type, entry,
@@ -130,34 +130,34 @@ information (e.g. subways on that line) and has many NAs.
 ## Problem 2: Part 2
 
 ``` r
-count(distinct(NYC_transit_df, line, station_name))
+count(distinct(NYC_transit_df, line, station_name)) # distinct stations 
 ## # A tibble: 1 x 1
 ##       n
 ##   <int>
 ## 1   465
 
-count(filter(NYC_transit_df, ada == TRUE) %>%
+count(filter(NYC_transit_df, ada == TRUE) %>% # distinct stations that are ADA compliant
         distinct(line, station_name))
 ## # A tibble: 1 x 1
 ##       n
 ##   <int>
 ## 1    84
 
-count(filter(NYC_transit_df, vending == "NO") %>%
+count(filter (NYC_transit_df, vending == "NO")) # subway stations without vending 
+## # A tibble: 1 x 1
+##       n
+##   <int>
+## 1   183
+
+count(filter(NYC_transit_df, vending == "NO") %>% # subway stations without vending that allowed entry
   filter (entry == "FALSE"))
 ## # A tibble: 1 x 1
 ##       n
 ##   <int>
 ## 1   114
 
-count(filter (NYC_transit_df, vending == "NO"))
-## # A tibble: 1 x 1
-##       n
-##   <int>
-## 1   183
-
 (count(filter(NYC_transit_df, vending == "NO") %>%
-  filter (entry == "TRUE")))/(count(filter (NYC_transit_df, vending == "NO")))
+  filter (entry == "TRUE")))/(count(filter (NYC_transit_df, vending == "NO"))) # Proportion of subway stations without vending that allowed entry
 ##           n
 ## 1 0.3770492
 ```
@@ -182,7 +182,7 @@ NYC_transit_tidy =
     route1:route11,
     names_to = "route_number", 
     values_to = "route_names") %>% 
-    drop_na(route_names) 
+    drop_na(route_names) # Pivot longer to tidy dataset 
 
 view (NYC_transit_tidy) # view dataset 
 ```
@@ -195,14 +195,14 @@ The code chunk below creates a dataset that counts distinct serve the A
 Train.
 
 ``` r
-# Count distinct stations that serve A train
+# Dataset that counts distinct stations that serve A train
   Distinct_A_stations= 
     NYC_transit_tidy %>%
     filter(route_names == 'A') %>% 
     distinct(station_name, line) %>%
     count()
     
-# Count stations that serve A train that are ADA compliant
+# Dataste that counts stations that serve A train that are ADA compliant
 ADA_compliant_A_trains = 
   NYC_transit_tidy %>% 
   filter(route_names == 'A', ada == TRUE) %>% 
@@ -323,19 +323,18 @@ Write a short paragraph about these datasets. Explain briefly what each
 dataset contained, and describe the resulting dataset (e.g. give the
 dimension, range of years, and names of key variables):
 
-The original pols-month\_df dataset contained 822 observations and 9
-variables listing the the number of democratic and republican governors,
-US Senators, and US House of Representatives as well as the president’s
-political affiliation at a moment in time. The dataset was restricted to
-the democractic and republican parties. After tidying the dataset, I
-have political information between the years 1947 and 2015 with 822
-observations and 9 variables in the dataset. These are the following
-variables in this dataset: gov\_dem, gov\_gop, Month, president\_party,
-rep\_dem, rep\_gop, sen\_dem, sen\_gop, Year. I created a “prez\_party”
-variable indicated the incumbent’s president political party. I kept
-prez\_gop that was coded as 2 because that was during Nixon’s
-resignation and the vice president, Ford, was affiliated with the gop
-party when he was acting president.
+The pols-month\_df dataset contains the number of democratic and
+republican governors, US Senators, and US House of Representatives as
+well as the president’s political affiliation at a moment in time. The
+dataset was restricted to the democractic and republican parties. After
+tidying the dataset, I have political information between the years 1947
+and 2015 with 822 observations and 9 variables in the dataset. These are
+the following variables in this dataset: gov\_dem, gov\_gop, Month,
+president\_party, rep\_dem, rep\_gop, sen\_dem, sen\_gop, Year. I
+created a “prez\_party” variable indicated the incumbent’s president
+political party. I kept prez\_gop that was coded as 2 because that was
+during Nixon’s resignation and the vice president, Ford, was affiliated
+with the gop party when he was acting president.
 
 After the “snp\_df” dataset, it contained 787 observations and 9
 variables in the dataset, which were close, Month, Year. This datset
@@ -355,6 +354,7 @@ The final dataset was combined using left\_join and contains 822 rows by
 11 columns that includes NA for empty observations for each variable ..
 The dataset contains on politicians’ political affiliation, unemploymnet
 rate and the S\&P stock market from 1947 to 2015. The important
-variables are described above and final dataset includes these
-variables:close, gov\_dem, gov\_gop, Month, president\_party, rep\_dem,
-rep\_gop, sen\_dem, sen\_gop, Unemployment\_rate, Year.
+variables are described above in the separate datasets and the final
+dataset includes these variables:close, gov\_dem, gov\_gop, Month,
+president\_party, rep\_dem, rep\_gop, sen\_dem, sen\_gop,
+Unemployment\_rate, Year.
